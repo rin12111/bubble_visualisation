@@ -2,8 +2,17 @@ body {
   padding: 100px;
 }
 
-.container {
+.action-view {
   display: flex;
+  margin-top: 50px;
   justify-content: center;
-  margin-left: -10px;
+  gap: 30px;
+}
+
+.button {
+  width: 248px;
+  padding: 13px 53px;
+  font-size: 17px;
+  background: #ffb214;
+  border-radius: 5px;
 }
