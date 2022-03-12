@@ -52,8 +52,16 @@ function App() {
     }, TRANSITION_DURATION * 3);
   }
 
+  const timeoutRef = React.useRef(null);
+  const processingStep = React.useRef(false);
+
   const stepButtonClick = () => {
-    if (bState.sorting) { return; }
+    if (bState.sorting || processingStep.current) { return; }
+    if (timeoutRef.current) { clearTimeout(timeoutRef.current); }
+    processingStep.current = true;
+    timeoutRef.current = setTimeout(() => {
+      processingStep.current = false;
+    }, TRANSITION_DURATION * 3);
     setBState({
       ...bState,
       step: bState.step + 1
