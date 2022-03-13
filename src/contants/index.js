@@ -6,4 +6,4 @@ export const ANIMATION_TYPE = {
     SELECTING: 4
 }
 
-export const TRANSITION_DURATION = 350;
+export const TRANSITION_DURATION = 200;
