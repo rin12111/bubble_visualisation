@@ -34,7 +34,8 @@ function BubbleSortContainer({ dataSource, sorting, reloading, step }) {
       }else if ((index === bState.currentPos || index === bState.currentPos + 1) && bState.lockIndex > 0 && index < bState.lockIndex){
         type = sorting || bState.step !== step ? ANIMATION_TYPE.FLASHING : ANIMATION_TYPE.SELECTING;
       }
-      return <Node key={v4()} number={num} type={type} highlight={index >= bState.lockIndex} distance={1} />
+      
+      return <Node key={v4()} number={num} type={type} highlight={index >= bState.lockIndex} />
     })
   }
 
@@ -53,16 +54,11 @@ function BubbleSortContainer({ dataSource, sorting, reloading, step }) {
         setBState({
           ...bState,
           swapIndex: NONE_SWAP_INDEX,
-          dataSource: [...dataSource],
           currentPos: index + 1,
           step: step
         })
       }, TRANSITION_DURATION * 3);
     }else if (index + 1 < bState.lockIndex){
-      console.log(index, bState.lockIndex)
-      setBState({
-        ...bState,
-      })
       setTimeout(() => {
         setBState({
           ...bState,
@@ -71,9 +67,6 @@ function BubbleSortContainer({ dataSource, sorting, reloading, step }) {
         })
       }, TRANSITION_DURATION * 3);
     }else {
-      setBState({
-        ...bState,
-      })
       setTimeout(() => {
         bState.lockIndex -= 1;
         if (bState.lockIndex > 0){

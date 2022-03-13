@@ -1,5 +1,6 @@
 import React from 'react';
 import BubbleSortContainer from './components/BubbleSortContainer';
+import InsertionSortContainer from './components/InsertionSortContainer';
 import './App.css';
 import { TRANSITION_DURATION } from './contants';
 
@@ -19,7 +20,7 @@ function App() {
   const dataSource = React.useMemo(() => {
     const source = [];
     for (let i = 1 ; i <= bState.numberOfNode ; i++) {
-      source.push(Math.floor(Math.random() * 200));
+      source.push(Math.floor(Math.random() * 200) + 1);
     }
     return source;
   }, [bState.numberOfNode, bState.resetCount])
@@ -56,14 +57,12 @@ function App() {
     }, TRANSITION_DURATION * 3);
   }
 
-  const timeoutRef = React.useRef(null);
   const processingStep = React.useRef(false);
 
   const stepButtonClick = () => {
     if (bState.sorting || processingStep.current) { return; }
-    if (timeoutRef.current) { clearTimeout(timeoutRef.current); }
     processingStep.current = true;
-    timeoutRef.current = setTimeout(() => {
+    setTimeout(() => {
       processingStep.current = false;
     }, TRANSITION_DURATION * 3);
     setBState({
@@ -107,8 +106,8 @@ function App() {
   
   return (
     <>
-      <BubbleSortContainer dataSource={dataSource} sorting={bState.sorting} reloading={bState.reloading} step={bState.step} />
-      <label className="label" for="node-input">Number of nodes ({MININUM_NODE} ~ {MAXIMUM_NODE}): </label>
+      <InsertionSortContainer dataSource={dataSource} sorting={bState.sorting} reloading={bState.reloading} step={bState.step} />
+      <label className="label" htmlFor="node-input">Number of nodes ({MININUM_NODE} ~ {MAXIMUM_NODE}): </label>
       <input id="node-input" className='input' ref={inputRef} /> 
       <input className='button' type="button" value="Set" onClick={setNumberNodeButtonClick} />
 
