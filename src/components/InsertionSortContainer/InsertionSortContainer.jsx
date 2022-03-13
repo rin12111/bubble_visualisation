@@ -3,6 +3,7 @@ import React from 'react';
 import { v4 } from 'uuid';
 import { ANIMATION_TYPE, TRANSITION_DURATION } from '../../contants';
 import LoadingIndicator from '../LoadingIndicator/LoadingIndicator';
+import { limiter } from '../../util';
 
 const NONE_INDEX = -2;
 
@@ -60,7 +61,7 @@ function InsertionSortContainer({ dataSource, sorting, reloading, step }) {
           ...bState,
           swapIndex: traversePos + 1,
         });
-        setTimeout(() => {
+        limiter(() => {
           const temp = dataSource[index];
           for (let i = index; i >= traversePos + 1 ; i--){
             dataSource[i] = dataSource[i-1];
@@ -73,25 +74,25 @@ function InsertionSortContainer({ dataSource, sorting, reloading, step }) {
             traversePos: NONE_INDEX,
             step: step
           })
-        }, TRANSITION_DURATION * 3);
+        });
       }else if (bState.currentPos + 1 < dataSource.length) {
-        setTimeout(() => {
+        limiter(() => {
           setBState({
             ...bState,
             currentPos: bState.currentPos + 1,
             traversePos: NONE_INDEX,
             step: step
           });
-        }, TRANSITION_DURATION * 3);
+        });
       }
     }else {
-      setTimeout(() => {
+      limiter(() => {
         setBState({
           ...bState,
           traversePos,
           step: step
         });
-      }, TRANSITION_DURATION * 3);
+      });
     }
   }, [bState.currentPos, bState.traversePos, sorting, step]);
 

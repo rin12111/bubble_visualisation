@@ -5,11 +5,21 @@
   gap: 30px;
 }
 
-.button {
-  width: 248px;
+.solid-button {
+  width: 200px;
   padding: 13px 53px;
   font-size: 17px;
   background: #ffb214;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.button {
+  width: 200px;
+  padding: 13px 53px;
+  font-size: 17px;
+  background: #fff;
+  border: 1px solid black;
   border-radius: 5px;
 }
 

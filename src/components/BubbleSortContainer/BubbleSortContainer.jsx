@@ -3,6 +3,7 @@ import React from 'react';
 import { v4 } from 'uuid';
 import { ANIMATION_TYPE, TRANSITION_DURATION } from '../../contants';
 import LoadingIndicator from '../LoadingIndicator/LoadingIndicator';
+import { limiter } from '../../util';
 
 const NONE_SWAP_INDEX = -2;
 
@@ -47,7 +48,7 @@ function BubbleSortContainer({ dataSource, sorting, reloading, step }) {
         ...bState,
         swapIndex: index,
       })
-      setTimeout(() => {
+      limiter(() => {
         const temp = dataSource[index];
         dataSource[index] = dataSource[index + 1];
         dataSource[index + 1] = temp;
@@ -57,17 +58,17 @@ function BubbleSortContainer({ dataSource, sorting, reloading, step }) {
           currentPos: index + 1,
           step: step
         })
-      }, TRANSITION_DURATION * 3);
+      });
     }else if (index + 1 < bState.lockIndex){
-      setTimeout(() => {
+      limiter(() => {
         setBState({
           ...bState,
           currentPos: index + 1,
           step: step
         })
-      }, TRANSITION_DURATION * 3);
+      });
     }else {
-      setTimeout(() => {
+      limiter(() => {
         bState.lockIndex -= 1;
         if (bState.lockIndex > 0){
           bState.currentPos = 0;
@@ -76,7 +77,7 @@ function BubbleSortContainer({ dataSource, sorting, reloading, step }) {
           ...bState,
           step: step
         })
-      }, TRANSITION_DURATION * 3);
+      });
     }
   }, [bState.currentPos, sorting, step]);
 

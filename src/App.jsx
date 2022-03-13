@@ -1,21 +1,30 @@
 import React from 'react';
 import BubbleSortContainer from './components/BubbleSortContainer';
 import InsertionSortContainer from './components/InsertionSortContainer';
-import './App.css';
 import { TRANSITION_DURATION } from './contants';
+import { limiter } from './util';
+import './App.css';
 
 const DEFAULT_NUMBER_OF_NODE = 10;
 const MININUM_NODE = 5;
 const MAXIMUM_NODE = 20;
 
+const ALGORITHM = {
+  BUBBLE_SORT: 1,
+  INSERTION_SORT: 2
+}
+
+const initialState = {
+  sortAlgo: ALGORITHM.BUBBLE_SORT,
+  numberOfNode: DEFAULT_NUMBER_OF_NODE,
+  resetCount: 0,
+  sorting: false,
+  reloading: false,
+  step: 0
+}
+
 function App() {
-  const [bState, setBState] = React.useState({
-    numberOfNode: DEFAULT_NUMBER_OF_NODE,
-    resetCount: 0,
-    sorting: false,
-    reloading: false,
-    step: 0
-  });
+  const [bState, setBState] = React.useState(initialState);
 
   const dataSource = React.useMemo(() => {
     const source = [];
@@ -23,7 +32,7 @@ function App() {
       source.push(Math.floor(Math.random() * 200) + 1);
     }
     return source;
-  }, [bState.numberOfNode, bState.resetCount])
+  }, [bState.numberOfNode, bState.resetCount, bState.sortAlgo])
 
   const startButtonClick = () => {
     if (!bState.sorting){
@@ -41,20 +50,19 @@ function App() {
 
   const resetButtonClick = () => {
     setBState({
-      numberOfNode: bState.numberOfNode,
-      resetCount: bState.resetCount,
+      ...bState,
       sorting: false,
       reloading: true
     });
-    setTimeout(() => {
+    limiter(() => {
       setBState({
-        numberOfNode: bState.numberOfNode,
+        ...bState,
         resetCount: bState.resetCount + 1,
         sorting: false,
         reloading: false,
         step: 0
       });
-    }, TRANSITION_DURATION * 3);
+    });
   }
 
   const processingStep = React.useRef(false);
@@ -62,9 +70,9 @@ function App() {
   const stepButtonClick = () => {
     if (bState.sorting || processingStep.current) { return; }
     processingStep.current = true;
-    setTimeout(() => {
+    limiter(() => {
       processingStep.current = false;
-    }, TRANSITION_DURATION * 3);
+    });
     setBState({
       ...bState,
       step: bState.step + 1
@@ -84,37 +92,67 @@ function App() {
     }
     inputRef.current.value = newNumberOfNode;
     setBState({
+      ...bState,
       numberOfNode: newNumberOfNode,
-      resetCount: bState.resetCount,
       sorting: false,
       reloading: true
     });
-    setTimeout(() => {
+    limiter(() => {
       setBState({
+        ...bState,
         numberOfNode: newNumberOfNode,
         resetCount: bState.resetCount + 1,
         sorting: false,
         reloading: false,
         step: 0
       });
-    }, TRANSITION_DURATION * 3);
+    });
+  }
+
+  const onSortChange = (sortType) => {
+    return () => {
+      if (sortType !== bState.sortAlgo){
+        setBState({
+          ...initialState,
+          sortAlgo: sortType,
+          numberOfNode: bState.numberOfNode,
+          reloading: true
+        });
+        limiter(() => {
+          setBState({
+            ...initialState,
+            numberOfNode: bState.numberOfNode,
+            sortAlgo: sortType,
+          });
+        });
+      }
+    }
   }
 
   React.useEffect(() => {
     inputRef.current.value = bState.numberOfNode;
   }, []);
-  
   return (
     <>
-      <InsertionSortContainer dataSource={dataSource} sorting={bState.sorting} reloading={bState.reloading} step={bState.step} />
+      {
+        bState.sortAlgo === ALGORITHM.BUBBLE_SORT ? (
+          <BubbleSortContainer dataSource={dataSource} sorting={bState.sorting} reloading={bState.reloading} step={bState.step} />
+        ) : (
+          <InsertionSortContainer dataSource={dataSource} sorting={bState.sorting} reloading={bState.reloading} step={bState.step} />
+        )
+      }
       <label className="label" htmlFor="node-input">Number of nodes ({MININUM_NODE} ~ {MAXIMUM_NODE}): </label>
       <input id="node-input" className='input' ref={inputRef} /> 
-      <input className='button' type="button" value="Set" onClick={setNumberNodeButtonClick} />
-
+      <input className='solid-button' type="button" value="Set" onClick={setNumberNodeButtonClick} />
+      <div style={{ display: 'flex', alignItems: 'center', marginTop: '50px'}}>
+        <label className="label">Algorithm: </label>
+        <input style={{ marginLeft: '50px'}} className={bState.sortAlgo === ALGORITHM.BUBBLE_SORT ? 'solid-button' : 'button'} type="button" value="Bubble Sort" onClick={onSortChange(ALGORITHM.BUBBLE_SORT)} />
+        <input style={{ marginLeft: '20px'}} className={bState.sortAlgo === ALGORITHM.INSERTION_SORT ? 'solid-button' : 'button'} type="button" value="Insertion Sort" onClick={onSortChange(ALGORITHM.INSERTION_SORT)} />
+      </div>
       <div className='action-view'>
-        <input className='button' type="button" value={bState.sorting ? 'Stop': 'Start'} onClick={startButtonClick} />
-        <input className='button' type="button" value="Reset" onClick={resetButtonClick} />
-        <input className='button' type="button" value="Step" onClick={stepButtonClick} />
+        <input className='solid-button' type="button" value={bState.sorting ? 'Stop': 'Start'} onClick={startButtonClick} />
+        <input className='solid-button' type="button" value="Reset" onClick={resetButtonClick} />
+        <input className='solid-button' type="button" value="Step" onClick={stepButtonClick} />
       </div>
     </>
   )
