@@ -1,7 +1,7 @@
 import Node from './Node'
 import React from 'react';
 import { v4 } from 'uuid';
-import { ANIMATION_TYPE, TRANSITION_DURATION } from '../../contants';
+import { ANIMATION_TYPE } from '../../contants';
 import LoadingIndicator from '../LoadingIndicator/LoadingIndicator';
 import { limiter } from '../../util';
 
