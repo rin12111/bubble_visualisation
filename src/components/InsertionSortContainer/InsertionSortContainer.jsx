@@ -81,7 +81,7 @@ function InsertionSortContainer({ dataSource, sorting, reloading, step }) {
             step: step
           })
         });
-      }else if (bState.currentPos + 1 < dataSource.length) {
+      }else if (bState.currentPos < dataSource.length) {
         //Node doesn't need any change
 
         //Shift to next number node when flashing animation stop.
