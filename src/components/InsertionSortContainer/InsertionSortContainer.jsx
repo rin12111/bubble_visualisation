@@ -6,22 +6,19 @@ import LoadingIndicator from '../LoadingIndicator/LoadingIndicator';
 import { limiter } from '../../util';
 
 const NONE_INDEX = -2;
+const initialState = {
+  swapIndex: NONE_INDEX,
+  traversePos: NONE_INDEX,
+  currentPos: 0,
+  step: 0,
+}
 
 function InsertionSortContainer({ dataSource, sorting, reloading, step }) {
-  const [bState, setBState] = React.useState({
-    swapIndex: NONE_INDEX,
-    traversePos: NONE_INDEX,
-    currentPos: 0,
-    step: 0,
-  });
+  const [bState, setBState] = React.useState(initialState);
 
+  //Reset main state when data source change.
   React.useEffect(() => {
-    setBState({
-        swapIndex: NONE_INDEX,
-        traversePos: NONE_INDEX,
-        currentPos: 0,
-        step: 0
-    })
+    setBState(initialState)
   }, [dataSource]);
 
   const renderNodes = () => {
@@ -49,18 +46,27 @@ function InsertionSortContainer({ dataSource, sorting, reloading, step }) {
     })
   }
 
+  //Sorting process
   React.useEffect(() => {
     if (!sorting && (!step || step === bState.step)){ return; }
+
+    //Reaching the end of the array, sort process finished.
     if (bState.currentPos >= dataSource.length) { return; }
+
     const index = bState.currentPos;
     const traversePos = bState.traversePos === NONE_INDEX ? index - 1 : bState.traversePos - 1;
     if (traversePos < 0 || dataSource[traversePos] < dataSource[index]){
+      //Found insert position
+
       const distance = index - traversePos - 1;
       if (distance >= 1){
+        //Trigger change swapIndex state to apply animation for current nodes
         setBState({
           ...bState,
           swapIndex: traversePos + 1,
         });
+
+        //Shift to next number node when swap animation stop.
         limiter(() => {
           const temp = dataSource[index];
           for (let i = index; i >= traversePos + 1 ; i--){
@@ -76,6 +82,9 @@ function InsertionSortContainer({ dataSource, sorting, reloading, step }) {
           })
         });
       }else if (bState.currentPos + 1 < dataSource.length) {
+        //Node doesn't need any change
+
+        //Shift to next number node when flashing animation stop.
         limiter(() => {
           setBState({
             ...bState,
@@ -86,6 +95,7 @@ function InsertionSortContainer({ dataSource, sorting, reloading, step }) {
         });
       }
     }else {
+      //Current node still greater than validate-node, traverse back 1 node
       limiter(() => {
         setBState({
           ...bState,

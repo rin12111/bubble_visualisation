@@ -26,6 +26,7 @@ const initialState = {
 function App() {
   const [bState, setBState] = React.useState(initialState);
 
+  //Init data source (array of number), re-trigger when one of the following dependency change.
   const dataSource = React.useMemo(() => {
     const source = [];
     for (let i = 1 ; i <= bState.numberOfNode ; i++) {
@@ -34,6 +35,7 @@ function App() {
     return source;
   }, [bState.numberOfNode, bState.resetCount, bState.sortAlgo])
 
+  //Handle start button click, begin the sorting process
   const startButtonClick = () => {
     if (!bState.sorting){
       setBState({
@@ -48,6 +50,7 @@ function App() {
     }
   }
 
+  //Handle reset button click, trigger reload + refetch datasource
   const resetButtonClick = () => {
     setBState({
       ...bState,
@@ -67,6 +70,7 @@ function App() {
 
   const processingStep = React.useRef(false);
 
+  //Handle step button click, animate sorting process step by step
   const stepButtonClick = () => {
     if (bState.sorting || processingStep.current) { return; }
     processingStep.current = true;
@@ -81,6 +85,7 @@ function App() {
 
   const inputRef = React.useRef(null);
 
+  //Handle changing number of node
   const setNumberNodeButtonClick = () => {
     let newNumberOfNode = parseInt(inputRef.current.value);
     if (Number.isNaN(newNumberOfNode)){
@@ -97,6 +102,7 @@ function App() {
       sorting: false,
       reloading: true
     });
+    // Call limiter to present reload animation before rerender
     limiter(() => {
       setBState({
         ...bState,
@@ -109,6 +115,7 @@ function App() {
     });
   }
 
+  //Handle sort button click, changing the sort algorithm
   const onSortChange = (sortType) => {
     return () => {
       if (sortType !== bState.sortAlgo){
@@ -129,9 +136,11 @@ function App() {
     }
   }
 
+  //Set default number of node for input, trigger one time only
   React.useEffect(() => {
     inputRef.current.value = bState.numberOfNode;
-  }, []);
+  });
+
   return (
     <>
       {

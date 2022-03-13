@@ -6,21 +6,23 @@ import LoadingIndicator from '../LoadingIndicator/LoadingIndicator';
 import { limiter } from '../../util';
 
 const NONE_SWAP_INDEX = -2;
+const initialState = {
+  swapIndex: NONE_SWAP_INDEX,
+  currentPos: 0,
+  step: 0,
+}
 
 function BubbleSortContainer({ dataSource, sorting, reloading, step }) {
   const [bState, setBState] = React.useState({
-    swapIndex: NONE_SWAP_INDEX,
-    currentPos: 0,
+    ...initialState,
     lockIndex: dataSource.length,
-    step: 0,
   });
 
+  //Reset main state when data source change.
   React.useEffect(() => {
     setBState({
-      swapIndex: NONE_SWAP_INDEX,
-      currentPos: 0,
+      ...initialState,
       lockIndex: dataSource.length,
-      step: 0
     })
   }, [dataSource]);
 
@@ -40,14 +42,21 @@ function BubbleSortContainer({ dataSource, sorting, reloading, step }) {
     })
   }
 
+  // Sorting process
   React.useEffect(() => {
     if (!sorting && (!step || step === bState.step)){ return; }
+    
     const index = bState.currentPos;
     if (dataSource[index] > dataSource[index + 1]){
+      //Found a node that need to swap
+
+      //Trigger change swapIndex state to apply animation for current nodes
       setBState({
         ...bState,
         swapIndex: index,
       })
+
+      //Shift to next number node when swap animation stop.
       limiter(() => {
         const temp = dataSource[index];
         dataSource[index] = dataSource[index + 1];
@@ -60,6 +69,9 @@ function BubbleSortContainer({ dataSource, sorting, reloading, step }) {
         })
       });
     }else if (index + 1 < bState.lockIndex){
+      //Found a node that doesn't need to swap.
+
+      //Shift to next number node when flashing animation stop.
       limiter(() => {
         setBState({
           ...bState,
@@ -68,8 +80,13 @@ function BubbleSortContainer({ dataSource, sorting, reloading, step }) {
         })
       });
     }else {
+      //Reach the end of the loop
+
+      //Shift to next number node when flashing animation stop.
       limiter(() => {
         bState.lockIndex -= 1;
+
+        //Validate if the array has sorted completely
         if (bState.lockIndex > 0){
           bState.currentPos = 0;
         }
