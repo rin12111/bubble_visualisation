@@ -1,18 +1,9 @@
 import React from 'react';
 import BubbleSortContainer from './components/BubbleSortContainer';
 import InsertionSortContainer from './components/InsertionSortContainer';
-import { TRANSITION_DURATION } from './contants';
 import { limiter } from './util';
 import './App.css';
-
-const DEFAULT_NUMBER_OF_NODE = 10;
-const MININUM_NODE = 5;
-const MAXIMUM_NODE = 20;
-
-const ALGORITHM = {
-  BUBBLE_SORT: 1,
-  INSERTION_SORT: 2
-}
+import { ALGORITHM, DEFAULT_NUMBER_OF_NODE, MAXIMUM_NODE, MININUM_NODE } from './contants';
 
 const initialState = {
   sortAlgo: ALGORITHM.BUBBLE_SORT,
